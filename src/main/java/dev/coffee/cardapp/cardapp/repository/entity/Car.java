@@ -1,28 +1,20 @@
-package dev.coffee.cardapp.cardapp.domain;
+package dev.coffee.cardapp.cardapp.repository.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.Hibernate;
-
+import javax.persistence.Id;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
+import javax.persistence.FetchType;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Car {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cardId;
     private String brand;
@@ -31,21 +23,20 @@ public class Car {
     private String registerNumber;
     private Integer modelYear;
     private Integer price;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner")
-    private Owner owner;
+    @ManyToMany(mappedBy = "cars", fetch = FetchType.EAGER)
+    private Set<Owner> owners;
 
     public Car() {
     }
 
-    public Car(String brand, String model, String color, String registerNumber, Integer modelYear, Integer price, Owner owner) {
+    public Car(String brand, String model, String color, String registerNumber, Integer modelYear, Integer price, Set<Owner> owners) {
         this.brand = brand;
         this.model = model;
         this.color = color;
         this.registerNumber = registerNumber;
         this.modelYear = modelYear;
         this.price = price;
-        this.owner = owner;
+        this.owners = owners;
     }
 
     @Override
@@ -59,6 +50,19 @@ public class Car {
                 ", modelYear=" + modelYear +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return Objects.equals(cardId, car.cardId) && Objects.equals(brand, car.brand) && Objects.equals(model, car.model) && Objects.equals(color, car.color) && Objects.equals(registerNumber, car.registerNumber) && Objects.equals(modelYear, car.modelYear) && Objects.equals(price, car.price) && Objects.equals(owners, car.owners);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cardId, brand, model, color, registerNumber, modelYear, price, owners);
     }
 
     public Long getCardId() {
@@ -117,24 +121,11 @@ public class Car {
         this.price = price;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public Set<Owner> getOwners() {
+        return owners;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Car car = (Car) o;
-        return cardId != null && Objects.equals(cardId, car.cardId);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public void setOwners(Set<Owner> owners) {
+        this.owners = owners;
     }
 }

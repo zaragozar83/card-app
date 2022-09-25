@@ -1,6 +1,6 @@
 package dev.coffee.cardapp.cardapp.repository;
 
-import dev.coffee.cardapp.cardapp.domain.Car;
+import dev.coffee.cardapp.cardapp.repository.entity.Car;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
